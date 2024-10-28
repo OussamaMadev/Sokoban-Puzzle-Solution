@@ -6,10 +6,10 @@ class Node:
         self.parent = parent
         self.action = action
         self.g = g  
-        self.f = 0  
-
-    def set_f(self, heuristic):
-        self.f = self.g + heuristic(self.state)
+        self.f = 0 
+         
+    def set_f(self, heuristic, target_positions):
+        self.f = self.g + heuristic(self, target_positions)
 
     def get_path(self):
         path = []
@@ -62,25 +62,22 @@ def BFS(s):
 
     return None
     
+def manhattan_distance(pos1, pos2):
+    return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])
 
-# Function BFS (s, successorsFn, isGoal)
-# Begin
-# Open: queue /* FIFO list */
-# Closed: list
-# init_node <- Node (s, None, None) /* A data structure with (state, parentNode, action) attributes*/
+def h1(node, target_positions):
+    nb_left_blocks = sum(1 for box_pos in node.state.get_boxes() if box_pos not in target_positions)
+    heuristic_value = 0
+    for box_pos in node.state.get_boxes():
+        min_distance = min(manhattan_distance(box_pos, target) for target in target_positions)
+        heuristic_value += min_distance
+    return heuristic_value + nb_left_blocks
 
-# if (isGoal(init_node.state)) then return init_node
-# Open.enqueue(init_node)
-# Closed <- [ ]
+def h2(node, target_positions):
+    nb_left_blocks = sum(1 for box_pos in node.state.get_boxes() if box_pos not in target_positions)
+    heuristic_value = 0
+    for box_pos in node.state.get_boxes():
+        min_distance = min(manhattan_distance(box_pos, target) for target in target_positions)
+        heuristic_value += min_distance
+    return 2 * nb_left_blocks + heuristic_value
 
-# while (not Open.empty()) do
-#   current <- Open.dequeue() /* Choose the shallowest node in Open */
-#   Closed.add(current)
-#   for each (action, successor) in successorsFn(current.state) do
-#       child <- Node (successor, current, action) /* Create a new node and link it to its parent */
-#       if (child.state not in Closed and not in Open) then
-#           if (isGoal(child.state)) then return child
-#           Open.enqueue(child)
-
-# return None
-# End
