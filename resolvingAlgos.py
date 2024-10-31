@@ -1,4 +1,5 @@
 import queue
+import heapq
 
 class Node:
     def __init__(self, state, parent=None, action=None, g=0):
@@ -7,6 +8,7 @@ class Node:
         self.action = action
         self.g = g  
         self.f = 0 
+        
          
     def set_f(self, heuristic, target_positions):
         self.f = self.g + heuristic(self, target_positions)
@@ -65,13 +67,9 @@ def BFS(s):
 def manhattan_distance(pos1, pos2):
     return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])
 
-def h1(node, target_positions):
-    nb_left_blocks = sum(1 for box_pos in node.state.get_boxes() if box_pos not in target_positions)
-    heuristic_value = 0
-    for box_pos in node.state.get_boxes():
-        min_distance = min(manhattan_distance(box_pos, target) for target in target_positions)
-        heuristic_value += min_distance
-    return heuristic_value + nb_left_blocks
+def h1(node):
+    nb_left_blocks = sum(1 for box_pos in node.state.box_positions if box_pos not in node.state.target_positions)
+    return nb_left_blocks
 
 def h2(node, target_positions):
     nb_left_blocks = sum(1 for box_pos in node.state.get_boxes() if box_pos not in target_positions)
@@ -81,3 +79,64 @@ def h2(node, target_positions):
         heuristic_value += min_distance
     return 2 * nb_left_blocks + heuristic_value
 
+
+def getLowestNode(open_set):
+    lowestNode = open_set[0]
+    for node in open_set:
+        if node.f < lowestNode.f:
+            lowestNode= node
+    
+    return lowestNode
+
+
+def a_star(start_state, h):
+    
+    open_set = []
+    closed_set = []
+
+    init_node = Node(start_state)
+    init_node.g = 0
+    init_node.f = h(init_node)
+    open_set.append(init_node)
+
+    while open_set:
+        print(open_set)
+        current_node = getLowestNode(open_set)
+
+        if current_node.state.isGoal():
+            return current_node 
+
+        closed_set.append(current_node)
+
+        for action, successor_state in current_node.state.successor_function():
+            child = Node(successor_state, current_node, action)
+            child.g = current_node.g + 1
+            child.f = child.g + h(child)
+
+            if child.state not in [g.state for g in open_set] and child.state not in [g.state for g in closed_set]:
+                # print("sdsd")
+                open_set.append(child)
+            else:
+                existingOpen = None
+                for open in open_set:
+                    
+                    if open.state.grid == child.state.grid and open.f > child.f:
+                        existingOpen =  open
+                        
+                       
+                existingClose = None
+                for close in closed_set:
+                    if close.state == child.state and close.f > child.f:
+                        existingClose =  close
+                
+                
+                if child.state in [g.state for g in open_set] and existingOpen:
+                    print("---------------------sd--------------")
+                    open_set.remove(existingOpen)
+                    open_set.append(child)
+                    
+                elif child.state in [g.state for g in closed_set] and existingClose:
+                    closed_set.remove(existingClose)
+                    open_set.append(child)  
+                                        
+    return None

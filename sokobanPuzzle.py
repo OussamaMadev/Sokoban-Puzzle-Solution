@@ -39,6 +39,12 @@ class SokobanPuzzle:
         self.box_positions = set(box_positions)
         self.target_positions = set(target_positions)
 
+        def __eq__(self, other):
+            return (self.grid == other.grid and
+            self.player_pos == other.player_pos and
+            self.box_positions == other.box_positions and
+            self.target_positions == other.target_positions)
+            
     def isGoal(self):
        return self.box_positions == self.target_positions
     
@@ -100,8 +106,6 @@ class SokobanPuzzle:
 
         return successors
     
-    def get_boxes(self):
-        return self.box_positions
     
     def is_valid_position(self, pos):
         return 0 <= pos[0] < len(self.grid) and 0 <= pos[1] < len(self.grid[0]) and self.grid[pos[0]][pos[1]] != "#"
@@ -238,67 +242,11 @@ while r.parent :
 resolvingAlgos.printGrid(state.grid)
 
 
+# r=resolvingAlgos.a_star(state, resolvingAlgos.h1)
 
-def a_star(start_state, target_positions, heuristic):
-    initNode = Node(start_state)
-    initNode.set_f(heuristic, target_positions)
-    openList = queue.PriorityQueue()
-    openList.put((initNode.f, initNode))
-    openListSet = {start_state}
-    closedList = set()
-    steps = 0  # Count of expanded nodes
+# while r.parent:
+#     resolvingAlgos.printGrid(r.state.grid)
+#     r=r.parent
 
-    while not openList.empty():
-        currentNode = openList.get()
-        openListSet.remove(currentNode.state)
-        closedList.add(currentNode.state)
-        steps += 1
-
-        if currentNode.state.isGoal():
-            return currentNode, steps
-
-        for (action, successor) in currentNode.state.successor_function():
-            child = Node(successor, currentNode, action, g=currentNode.g + 1)
-            if child.state in closedList:
-                continue
-            child.set_f(heuristic, target_positions)
-
-            if child.state not in openListSet:
-                openList.put((child.f, child))
-                openListSet.add(child.state)
-
-    return None, steps
-
-
-# Run the test
-def test_a_star(initial_grid, player_pos, box_positions, target_positions):
-    initial_state = Node(initial_grid, player_pos, box_positions, target_positions)
-    
-    print("Testing A* with h1:")
-    result_h1, steps_h1 = a_star(initial_state, target_positions, resolvingAlgos.h1(initial_state,target_positions))
-    if result_h1:
-        print("Solution found with h1 in", steps_h1, "steps.")
-        # print("Path to goal with h1:", result_h1.get_solution())
-    
-    print("\nTesting A* with h2:")
-    result_h2, steps_h2 = a_star(initial_state, target_positions, resolvingAlgos.h2(initial_state,target_positions))
-    if result_h2:
-        print("Solution found with h2 in", steps_h2, "steps.")
-        # print("Path to goal with h2:", result_h2.get_solution())
-
-
-test_a_star(initial_grid, player_pos, box_positions, target_positions)
-
-
-# animation()
-# print('init grid :')
-# print(state.player_pos)
 # resolvingAlgos.printGrid(state.grid)
 
-# states=state.successor_function()
-
-# print('successor grids :')
-# for (action, successor) in states:
-#     print(action)
-#     print(successor.player_pos)
-#     resolvingAlgos.printGrid(successor.grid)
