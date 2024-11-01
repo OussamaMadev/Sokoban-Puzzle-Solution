@@ -90,9 +90,8 @@ def getLowestNode(open_set):
 
 
 def a_star(start_state, h):
-    
     open_set = []
-    closed_set = []
+    closed_set = set()
 
     init_node = Node(start_state)
     init_node.g = 0
@@ -100,43 +99,31 @@ def a_star(start_state, h):
     open_set.append(init_node)
 
     while open_set:
-        print(open_set)
         current_node = getLowestNode(open_set)
 
         if current_node.state.isGoal():
-            return current_node 
+            return current_node
 
-        closed_set.append(current_node)
+        open_set.remove(current_node)
+        closed_set.add(current_node.state)
 
         for action, successor_state in current_node.state.successor_function():
             child = Node(successor_state, current_node, action)
             child.g = current_node.g + 1
             child.f = child.g + h(child)
 
-            if child.state not in [g.state for g in open_set] and child.state not in [g.state for g in closed_set]:
-                # print("sdsd")
+            if child.state not in [node.state for node in open_set] and child.state not in closed_set:
                 open_set.append(child)
             else:
-                existingOpen = None
-                for open in open_set:
-                    
-                    if open.state.grid == child.state.grid and open.f > child.f:
-                        existingOpen =  open
-                        
-                       
-                existingClose = None
-                for close in closed_set:
-                    if close.state == child.state and close.f > child.f:
-                        existingClose =  close
-                
-                
-                if child.state in [g.state for g in open_set] and existingOpen:
-                    print("---------------------sd--------------")
-                    open_set.remove(existingOpen)
-                    open_set.append(child)
-                    
-                elif child.state in [g.state for g in closed_set] and existingClose:
-                    closed_set.remove(existingClose)
-                    open_set.append(child)  
-                                        
+                for open_node in open_set:
+                    if open_node.state == child.state and open_node.f > child.f:
+                        open_set.remove(open_node)
+                        open_set.append(child)
+                        break
+                for closed_node in closed_set:
+                    if closed_node == child.state and closed_node.f > child.f:
+                        closed_set.remove(closed_node)
+                        open_set.append(child)
+                        break
+
     return None
