@@ -71,11 +71,11 @@ def h1(node):
     nb_left_blocks = sum(1 for box_pos in node.state.box_positions if box_pos not in node.state.target_positions)
     return nb_left_blocks
 
-def h2(node, target_positions):
-    nb_left_blocks = sum(1 for box_pos in node.state.get_boxes() if box_pos not in target_positions)
+def h2(node):
+    nb_left_blocks = sum(1 for box_pos in node.state.box_positions if box_pos not in node.state.target_positions)
     heuristic_value = 0
-    for box_pos in node.state.get_boxes():
-        min_distance = min(manhattan_distance(box_pos, target) for target in target_positions)
+    for box_pos in node.state.box_positions:
+        min_distance = min(manhattan_distance(box_pos, target) for target in node.state.target_positions)
         heuristic_value += min_distance
     return 2 * nb_left_blocks + heuristic_value
 
@@ -105,7 +105,7 @@ def a_star(start_state, h):
             return current_node
 
         open_set.remove(current_node)
-        closed_set.add(current_node.state)
+        closed_set.add(current_node)
 
         for action, successor_state in current_node.state.successor_function():
             child = Node(successor_state, current_node, action)

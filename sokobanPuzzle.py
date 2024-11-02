@@ -233,16 +233,16 @@ def animation():
 
 state = SokobanPuzzle(initial_grid,player_pos,box_positions,target_positions)
 
-# r=resolvingAlgos.BFS(state)
+# # r=resolvingAlgos.BFS(state)
 
-# while r.parent :
-#     resolvingAlgos.printGrid(r.state.grid)
-#     r=r.parent
+# # while r.parent :
+# #     resolvingAlgos.printGrid(r.state.grid)
+# #     r=r.parent
 
-# resolvingAlgos.printGrid(state.grid)
+# # resolvingAlgos.printGrid(state.grid)
 
 
-r=resolvingAlgos.a_star(state, resolvingAlgos.h1)
+r=resolvingAlgos.a_star(state, resolvingAlgos.h2)
 
 while r.parent:
     resolvingAlgos.printGrid(r.state.grid)
