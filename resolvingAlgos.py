@@ -63,24 +63,66 @@ def BFS(s):
     return None
     
 
-# Function BFS (s, successorsFn, isGoal)
-# Begin
-# Open: queue /* FIFO list */
-# Closed: list
-# init_node <- Node (s, None, None) /* A data structure with (state, parentNode, action) attributes*/
+def manhattan_distance(pos1, pos2):
+    return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])
 
-# if (isGoal(init_node.state)) then return init_node
-# Open.enqueue(init_node)
-# Closed <- [ ]
+def h1(node):
+    nb_left_blocks = sum(1 for box_pos in node.state.box_positions if box_pos not in node.state.target_positions)
+    return nb_left_blocks
 
-# while (not Open.empty()) do
-#   current <- Open.dequeue() /* Choose the shallowest node in Open */
-#   Closed.add(current)
-#   for each (action, successor) in successorsFn(current.state) do
-#       child <- Node (successor, current, action) /* Create a new node and link it to its parent */
-#       if (child.state not in Closed and not in Open) then
-#           if (isGoal(child.state)) then return child
-#           Open.enqueue(child)
+def h2(node, target_positions):
+    nb_left_blocks = sum(1 for box_pos in node.state.get_boxes() if box_pos not in target_positions)
+    heuristic_value = 0
+    for box_pos in node.state.get_boxes():
+        min_distance = min(manhattan_distance(box_pos, target) for target in target_positions)
+        heuristic_value += min_distance
+    return 2 * nb_left_blocks + heuristic_value
 
-# return None
-# End
+
+def getLowestNode(open_set):
+    lowestNode = open_set[0]
+    for node in open_set:
+        if node.f < lowestNode.f:
+            lowestNode= node
+    
+    return lowestNode
+
+
+def a_star(start_state, h):
+    open_set = []
+    closed_set = set()
+
+    init_node = Node(start_state)
+    init_node.g = 0
+    init_node.f = h(init_node)
+    open_set.append(init_node)
+
+    while open_set:
+        current_node = getLowestNode(open_set)
+
+        if current_node.state.isGoal():
+            return current_node
+
+        open_set.remove(current_node)
+        closed_set.add(current_node.state)
+
+        for action, successor_state in current_node.state.successor_function():
+            child = Node(successor_state, current_node, action)
+            child.g = current_node.g + 1
+            child.f = child.g + h(child)
+
+            if child.state not in [node.state for node in open_set] and child.state not in closed_set:
+                open_set.append(child)
+            else:
+                for open_node in open_set:
+                    if open_node.state == child.state and open_node.f > child.f:
+                        open_set.remove(open_node)
+                        open_set.append(child)
+                        break
+                for closed_node in closed_set:
+                    if closed_node == child.state and closed_node.f > child.f:
+                        closed_set.remove(closed_node)
+                        open_set.append(child)
+                        break
+
+    return None

@@ -2,17 +2,7 @@ import sys
 import pygame
 import resolvingAlgos
 import copy
-
-player_pos = (1, 1)
-box_positions = [(3, 2)]
-target_positions = [(2, 2)]
-
-TILE_SIZE = 100
-GRID_WIDTH, GRID_HEIGHT = 6, 6
-SCREEN_WIDTH, SCREEN_HEIGHT = GRID_WIDTH * TILE_SIZE, GRID_HEIGHT * TILE_SIZE
-
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
+import time
 
 PLAYER = 'R'
 BOX = 'B'
@@ -21,15 +11,6 @@ TARGET = 'S'
 EMPTY = ' '
 PLAYER_ON_TARGET = '.'
 BOX_ON_TARGET = '*'
-
-initial_grid = [
-    [WALL, WALL,   WALL,   WALL,  WALL,  WALL],
-    [WALL, PLAYER,  EMPTY,  EMPTY, EMPTY, WALL],
-    [WALL, EMPTY,  TARGET, EMPTY,   EMPTY ,WALL],
-    [WALL, EMPTY, BOX,  WALL, EMPTY ,WALL],
-    [WALL, EMPTY, EMPTY,    EMPTY, EMPTY ,WALL],
-    [WALL, WALL,   WALL,   WALL,  WALL,  WALL],
-]
 
 class SokobanPuzzle:
     def __init__(self, grid, player_pos, box_positions, target_positions):
@@ -53,16 +34,14 @@ class SokobanPuzzle:
         for action, (dr, dc) in moves.items():
             new_player_pos = (self.player_pos[0] + dr, self.player_pos[1] + dc)
 
-            
             if (0 <= new_player_pos[0] < len(self.grid) and
                     0 <= new_player_pos[1] < len(self.grid[0]) and
                     self.grid[new_player_pos[0]][new_player_pos[1]] != WALL):
 
-                
                 new_grid = copy.deepcopy(self.grid)
                 new_box_positions = set(self.box_positions) 
 
-                if new_player_pos in self.box_positions: 
+                if new_player_pos in self.box_positions: # pushing box
                     new_box_pos = (new_player_pos[0] + dr, new_player_pos[1] + dc)
 
                     
@@ -71,174 +50,259 @@ class SokobanPuzzle:
                             self.grid[new_box_pos[0]][new_box_pos[1]] != WALL and
                             new_box_pos not in self.box_positions):
 
-                       
                         new_box_positions.remove(new_player_pos)
                         new_box_positions.add(new_box_pos)
-
                         
                         if new_box_pos in self.target_positions:
                             new_grid[new_box_pos[0]][new_box_pos[1]] = BOX_ON_TARGET
                         else:
                             new_grid[new_box_pos[0]][new_box_pos[1]] = BOX
+                
+                    else: continue
 
-               
                 if self.player_pos in self.target_positions:
                     new_grid[self.player_pos[0]][self.player_pos[1]] = TARGET
                 else:
                     new_grid[self.player_pos[0]][self.player_pos[1]] = EMPTY
 
-               
                 if new_player_pos in self.target_positions:
                     new_grid[new_player_pos[0]][new_player_pos[1]] = PLAYER_ON_TARGET
                 else:
                     new_grid[new_player_pos[0]][new_player_pos[1]] = PLAYER
 
-                
-                new_state = SokobanPuzzle(new_grid, new_player_pos, new_box_positions, self.target_positions)
-                successors.append((action, new_state))
-
+                skipe=False
+                for box in box_positions:
+                    if box in deadSpots:
+                        skipe=True
+                        continue
+                if not skipe:
+                    new_state = SokobanPuzzle(new_grid, new_player_pos, new_box_positions, self.target_positions)
+                    successors.append((action, new_state))
+            
         return successors
+    
+    def __eq__(self, other):
+        if not isinstance(other, SokobanPuzzle):
+            return False
+        return (self.player_pos == other.player_pos and
+                self.box_positions == other.box_positions and
+                self.target_positions == other.target_positions)
+
+    def __hash__(self):
+        return hash((self.player_pos, frozenset(self.box_positions), frozenset(self.target_positions)))
+
+def isCorner(pos,grid):
+        x,y=pos
+
+        # if on border
+        if x==0 or x>=len(grid)-1 or y==0 or y>=len(grid[0])-1 : return False
+
+        if((grid[x+1][y]==WALL and grid[x][y+1]==WALL) 
+            or (grid[x+1][y]==WALL and grid[x][y-1]==WALL)
+            or (grid[x-1][y]==WALL and grid[x][y+1]==WALL)
+            or (grid[x-1][y]==WALL and grid[x][y-1]==WALL)):
+            return True
+        return False
+
+initial_grid = [
+    [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
+    [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+    [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, TARGET, BOX, EMPTY, WALL ],
+    [ WALL, PLAYER, EMPTY, BOX, WALL, EMPTY, EMPTY, EMPTY, TARGET, WALL ],
+    [ WALL, EMPTY, WALL, EMPTY, WALL, WALL, WALL, EMPTY, EMPTY, WALL ],
+    [ WALL, EMPTY, WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, WALL ],
+    [ WALL, EMPTY, EMPTY, EMPTY, TARGET, EMPTY, WALL, EMPTY, EMPTY, WALL ],
+    [ WALL,  EMPTY,BOX, EMPTY, BOX, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+    [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, TARGET, EMPTY, EMPTY, EMPTY, WALL ],
+    [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
+]
+
+# initial_grid = [
+#     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, PLAYER, EMPTY, BOX, WALL, EMPTY, EMPTY, EMPTY, TARGET, WALL ],
+#     [ WALL, EMPTY, WALL, EMPTY, WALL, WALL, WALL, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, TARGET, EMPTY, WALL, EMPTY, EMPTY, WALL ],
+#     [ WALL,  EMPTY,BOX, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
+# ]
+
+# initial_grid = [
+#     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
+#     [ WALL, EMPTY, PLAYER, EMPTY, EMPTY, TARGET, WALL ],
+#     [ WALL, EMPTY, WALL, EMPTY, WALL, EMPTY, WALL ],
+#     [ WALL, EMPTY, WALL, BOX, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, WALL ],
+#     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
+# ]
+# initial_grid = [
+#     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
+#     [ WALL, EMPTY, EMPTY, WALL, EMPTY, EMPTY, PLAYER, WALL ],
+#     [ WALL, EMPTY, WALL, WALL, WALL, WALL, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, BOX, EMPTY, EMPTY, TARGET, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, WALL, WALL, WALL, WALL ],
+#     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
+# ]
+
+# initial_grid = [
+#     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, TARGET, WALL ],
+#     [ WALL, EMPTY, WALL, EMPTY, WALL, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, PLAYER, EMPTY, BOX, EMPTY, WALL, EMPTY, WALL, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
+# ]
+
+# initial_grid = [
+#     [ WALL,WALL, WALL,  WALL, WALL, WALL ],
+#     [ WALL,EMPTY, EMPTY, EMPTY, TARGET, WALL ],
+#     [ WALL,EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL,EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL,EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL,EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL,EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL,EMPTY,BOX ,EMPTY  , WALL, WALL ],
+#     [ WALL,EMPTY,PLAYER , EMPTY,  EMPTY, WALL ],
+#     [ WALL,WALL, WALL, WALL,  WALL, WALL ]
+# ]
+
+# initial_grid = [
+#     [ WALL,WALL, WALL,  WALL, WALL, WALL ],
+#     [ WALL,EMPTY, EMPTY, EMPTY, TARGET, WALL ],
+#     [ WALL,EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL,EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL,EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL,EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL,EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL,EMPTY,BOX ,EMPTY  , WALL, WALL ],
+#     [ WALL,EMPTY, EMPTY,PLAYER ,  EMPTY, WALL ],
+#     [ WALL,WALL, WALL, WALL,  WALL, WALL ]
+# ]
+
+# initial_grid=[
+#     [WALL,WALL, WALL,  WALL,WALL, WALL],
+#     [WALL,EMPTY, EMPTY,  EMPTY,EMPTY, WALL],
+#     [WALL,EMPTY, WALL,  EMPTY,EMPTY, WALL],
+#     [WALL,EMPTY, PLAYER,  BOX,EMPTY, WALL],
+#     [WALL,EMPTY, BOX,  EMPTY,EMPTY, WALL],
+#     [WALL,WALL, WALL,  WALL,WALL, WALL],
+# ]
 
 
-def animation():
+GRID_WIDTH, GRID_HEIGHT = len(initial_grid[0]), len(initial_grid)
+box_positions = []
+target_positions = []
+
+deadSpots=[]
+
+for i in range(GRID_HEIGHT):
+    for  j in range(GRID_WIDTH):
+        elem=initial_grid[i][j]
+        if ( elem == PLAYER or elem == PLAYER_ON_TARGET):
+            player_pos = (i, j)
+        if (elem == BOX or elem == BOX_ON_TARGET):
+            box_positions.append((i, j))
+        if (elem == TARGET or elem == PLAYER_ON_TARGET or elem == BOX_ON_TARGET):
+            target_positions.append((i, j))
+        if (isCorner((i,j),initial_grid)):
+            deadSpots.append((i,j)) 
+
+# @todo complete the daedrSpots recognition 
+
+print(target_positions)
+print(box_positions)
+TILE_SIZE = 50
+SCREEN_WIDTH, SCREEN_HEIGHT = GRID_WIDTH * TILE_SIZE, GRID_HEIGHT * TILE_SIZE
+
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+
+player_img = pygame.transform.scale(pygame.image.load('./Sokoban-Puzzle-Solution/imgs/angry-birds.png'), (TILE_SIZE, TILE_SIZE)) 
+wall_img = pygame.transform.scale(pygame.image.load('./Sokoban-Puzzle-Solution/imgs/wall.png') , (TILE_SIZE, TILE_SIZE)) 
+box_img = pygame.transform.scale(pygame.image.load('./Sokoban-Puzzle-Solution/imgs/box.png'), (TILE_SIZE, TILE_SIZE)) 
+target_img = pygame.transform.scale(pygame.image.load('./Sokoban-Puzzle-Solution/imgs/target.png') , (TILE_SIZE, TILE_SIZE)) 
+empty_img = pygame.Surface((TILE_SIZE, TILE_SIZE))
+empty_img.fill(WHITE) 
+
+def draw_grid(grid,screen):
+    for row in range(GRID_HEIGHT):
+        for col in range(GRID_WIDTH):
+            element = grid[row][col]
+            x, y = col * TILE_SIZE, row * TILE_SIZE
+            if element == PLAYER:
+                screen.blit(player_img, (x, y))
+            elif element == BOX:
+                screen.blit(box_img, (x, y))
+            elif element == WALL:
+                screen.blit(wall_img, (x, y))
+            elif element == TARGET:
+                screen.blit(target_img, (x, y))
+            elif element == EMPTY:
+                screen.blit(empty_img, (x, y))
+            elif element == PLAYER_ON_TARGET:
+                screen.blit(player_img, (x, y))  
+            elif element == BOX_ON_TARGET:
+                screen.blit(box_img, (x, y)) 
+
+def draw_text(screen, text, x, y, font_size=30, color=(0, 0, 0), bg_color=(0, 0, 0, 150)):
+    font = pygame.font.Font(None, font_size)
+    text_surface = font.render(text, True, color)
+    text_rect = text_surface.get_rect(center=(x, y))
+    bg_surface = pygame.Surface((text_rect.width + 40, text_rect.height + 20), pygame.SRCALPHA)
+    bg_surface.fill(bg_color)
+    screen.blit(bg_surface, bg_surface.get_rect(center=text_rect.center))
+    screen.blit(text_surface, text_rect)
+
+def animation(nodes,delay):
 
     pygame.init()
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Sokoban Game")
-
-    player_img = pygame.image.load('C:/Users/ThinkPad/Documents/SELF.TAUGHT/programmesPython/ProblemResolving/Sokoban-Puzzle-Solution/imgs/angry-birds.png') 
-    player_img = pygame.transform.scale(player_img, (TILE_SIZE, TILE_SIZE)) 
-
-    wall_img = pygame.image.load('C:/Users/ThinkPad/Documents/SELF.TAUGHT/programmesPython/ProblemResolving/Sokoban-Puzzle-Solution/imgs/wall.png') 
-    wall_img = pygame.transform.scale(wall_img, (TILE_SIZE, TILE_SIZE)) 
-
-    box_img = pygame.image.load('C:/Users/ThinkPad/Documents/SELF.TAUGHT/programmesPython/ProblemResolving/Sokoban-Puzzle-Solution/imgs/box.png') 
-    box_img = pygame.transform.scale(box_img, (TILE_SIZE, TILE_SIZE)) 
-
-    target_img = pygame.image.load('C:/Users/ThinkPad/Documents/SELF.TAUGHT/programmesPython/ProblemResolving/Sokoban-Puzzle-Solution/imgs/target.png') 
-    target_img = pygame.transform.scale(target_img, (TILE_SIZE, TILE_SIZE)) 
-
-    empty_img = pygame.Surface((TILE_SIZE, TILE_SIZE))
-    empty_img.fill(WHITE) 
-
-
-
-    def draw_grid(grid):
-        for row in range(GRID_HEIGHT):
-            for col in range(GRID_WIDTH):
-                element = grid[row][col]
-                x, y = col * TILE_SIZE, row * TILE_SIZE
-                if element == PLAYER:
-                    screen.blit(player_img, (x, y))
-                elif element == BOX:
-                    screen.blit(box_img, (x, y))
-                elif element == WALL:
-                    screen.blit(wall_img, (x, y))
-                elif element == TARGET:
-                    screen.blit(target_img, (x, y))
-                elif element == EMPTY:
-                    screen.blit(empty_img, (x, y))
-                elif element == PLAYER_ON_TARGET:
-                    screen.blit(player_img, (x, y))  
-                elif element == BOX_ON_TARGET:
-                    screen.blit(box_img, (x, y)) 
-
-    def move_player(grid, direction):
-        global player_pos
-        row, col = player_pos
-        dr, dc = direction
-        new_row, new_col = row + dr, col + dc
-
-        if grid[new_row][new_col] in [EMPTY, TARGET]: 
-            if grid[row][col] == PLAYER_ON_TARGET:
-                grid[row][col] = TARGET 
-            else:
-                grid[row][col] = EMPTY
-
-            player_pos = (new_row, new_col)
-
-            if grid[new_row][new_col] == TARGET:
-                grid[new_row][new_col] = PLAYER_ON_TARGET
-            else:
-                grid[new_row][new_col] = PLAYER
-        elif grid[new_row][new_col] in [BOX, BOX_ON_TARGET]:  
-            box_new_row, box_new_col = new_row + dr, new_col + dc
-            if grid[box_new_row][box_new_col] in [EMPTY, TARGET]:  
-                if grid[box_new_row][box_new_col] == TARGET:
-                    grid[box_new_row][box_new_col] = BOX_ON_TARGET
-                else:
-                    grid[box_new_row][box_new_col] = BOX
-
-                if grid[new_row][new_col] == BOX_ON_TARGET:
-                    grid[new_row][new_col] = PLAYER_ON_TARGET
-                else:
-                    grid[new_row][new_col] = PLAYER
-
-                if grid[row][col] == PLAYER_ON_TARGET:
-                    grid[row][col] = TARGET
-                else:
-                    grid[row][col] = EMPTY
-
-                player_pos = (new_row, new_col)
-
-    def check_win(grid):
-        for row in range(GRID_HEIGHT):
-            for col in range(GRID_WIDTH):
-                if grid[row][col] == BOX:
-                    return False
-        return True
-    
-    
-
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    i=0
+    nodes.reverse()
+    end=len(nodes)-1
     running = True
-    while running:
+    while running:  
         screen.fill(WHITE)
-
-        draw_grid(initial_grid)
-
+        
+        if(i<end+1):
+            draw_grid(nodes[i],screen)
+            i=i+1
+        else:
+            draw_grid(nodes[end],screen)
+            if end>0:
+                draw_text(screen, "DONE", SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, font_size=100, color=(0, 255, 0), bg_color=(0, 0, 0, 150))
+            else :
+                draw_text(screen, "the game", SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, font_size=100, color=(0, 255, 0), bg_color=(0, 0, 0, 50))
+               
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
-                    move_player(initial_grid, (-1, 0))
-                elif event.key == pygame.K_DOWN:
-                    move_player(initial_grid, (1, 0))
-                elif event.key == pygame.K_LEFT:
-                    move_player(initial_grid, (0, -1))
-                elif event.key == pygame.K_RIGHT:
-                    move_player(initial_grid, (0, 1))
-
-        if check_win(initial_grid):
-            print("You won!")
-            running = False
 
         pygame.display.flip()
-
-        pygame.time.Clock().tick(30)
+        time.sleep(delay)
 
     pygame.quit()
-    sys.exit()
 
 state = SokobanPuzzle(initial_grid,player_pos,box_positions,target_positions)
 
+animation([initial_grid],0.5)
+t=time.time()
 r=resolvingAlgos.BFS(state)
+print(time.time()-t)
+if (not r):
+    print('not possible to solve')
+    exit()
+
+grids=[r.state.grid]
 
 while r.parent :
-    resolvingAlgos.printGrid(r.state.grid)
+    # resolvingAlgos.printGrid(r.state.grid)
     r=r.parent
+    grids.append(r.state.grid)
 
-resolvingAlgos.printGrid(state.grid)
-
-animation()
-# print('init grid :')
-# print(state.player_pos)
-# resolvingAlgos.printGrid(state.grid)
-
-# states=state.successor_function()
-
-# print('successor grids :')
-# for (action, successor) in states:
-#     print(action)
-#     print(successor.player_pos)
-#     resolvingAlgos.printGrid(successor.grid)
+animation(grids,0.6)
