@@ -149,6 +149,7 @@ initial_grid = [
 #     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
 # ]
 
+#MARCHE
 # initial_grid = [
 #     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
 #     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, TARGET, WALL ],
@@ -159,6 +160,7 @@ initial_grid = [
 #     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
 # ]
 
+#MARCHE
 # initial_grid = [
 #     [ WALL,WALL, WALL,  WALL, WALL, WALL ],
 #     [ WALL,EMPTY, EMPTY, EMPTY, TARGET, WALL ],
@@ -171,7 +173,7 @@ initial_grid = [
 #     [ WALL,EMPTY,PLAYER , EMPTY,  EMPTY, WALL ],
 #     [ WALL,WALL, WALL, WALL,  WALL, WALL ]
 # ]
-
+# MARCHE
 # initial_grid = [
 #     [ WALL,WALL, WALL,  WALL, WALL, WALL ],
 #     [ WALL,EMPTY, EMPTY, EMPTY, TARGET, WALL ],
@@ -185,6 +187,7 @@ initial_grid = [
 #     [ WALL,WALL, WALL, WALL,  WALL, WALL ]
 # ]
 
+#MARCHE
 # initial_grid=[
 #     [WALL,WALL, WALL,  WALL,WALL, WALL],
 #     [WALL,EMPTY, EMPTY,  EMPTY,EMPTY, WALL],

@@ -6,10 +6,11 @@ class Node:
         self.parent = parent
         self.action = action
         self.g = g  
-        self.f = 0  
-
-    def set_f(self, heuristic):
-        self.f = self.g + heuristic(self.state)
+        self.f = 0 
+        
+         
+    def set_f(self, heuristic, target_positions):
+        self.f = self.g + heuristic(self, target_positions)
 
     def get_path(self):
         path = []
@@ -62,7 +63,6 @@ def BFS(s):
 
     return None
     
-
 def manhattan_distance(pos1, pos2):
     return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])
 
@@ -70,6 +70,8 @@ def h1(node):
     nb_left_blocks = sum(1 for box_pos in node.state.box_positions if box_pos not in node.state.target_positions)
     return nb_left_blocks
 
+def h2(node):
+    nb_left_blocks = sum(1 for box_pos in node.state.box_positions if box_pos not in node.state.target_positions)
 def h2(node):
     nb_left_blocks = sum(1 for box_pos in node.state.box_positions if box_pos not in node.state.target_positions)
     heuristic_value = 0
@@ -99,11 +101,14 @@ def getLowestNode(open_set):
 def a_star(start_state, h):
     open_set = []
     closed_set = []
+    closed_set = []
 
     init_node = Node(start_state)
     init_node.g = 0
     init_node.f = h(init_node)  
+    init_node.f = h(init_node)  
     open_set.append(init_node)
+    
     
 
     while open_set:
