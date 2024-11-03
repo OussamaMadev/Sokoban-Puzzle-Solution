@@ -70,14 +70,25 @@ def h1(node):
     nb_left_blocks = sum(1 for box_pos in node.state.box_positions if box_pos not in node.state.target_positions)
     return nb_left_blocks
 
-def h2(node, target_positions):
-    nb_left_blocks = sum(1 for box_pos in node.state.get_boxes() if box_pos not in target_positions)
+def h2(node):
+    nb_left_blocks = sum(1 for box_pos in node.state.box_positions if box_pos not in node.state.target_positions)
     heuristic_value = 0
-    for box_pos in node.state.get_boxes():
-        min_distance = min(manhattan_distance(box_pos, target) for target in target_positions)
-        heuristic_value += min_distance
+    for box_pos in node.state.box_positions:
+        if node.state.target_positions:  # Ensure target_positions is not empty
+            min_distance = min(manhattan_distance(box_pos, target) for target in node.state.target_positions)
+            heuristic_value += min_distance
     return 2 * nb_left_blocks + heuristic_value
 
+
+def h3(node):
+    # nb_left_blocks = h1(node)
+    heuristic_value = 0
+    for box_pos in node.state.box_positions:
+        if node.state.target_positions:  # Ensure target_positions is not empty
+            heuristic_value = heuristic_value + manhattan_distance(node.state.player_pos, box_pos)
+    return heuristic_value
+
+    
 
 def getLowestNode(open_set):
     lowestNode = open_set[0]
@@ -87,42 +98,51 @@ def getLowestNode(open_set):
     
     return lowestNode
 
-
 def a_star(start_state, h):
     open_set = []
-    closed_set = set()
+    closed_set = []
 
     init_node = Node(start_state)
     init_node.g = 0
-    init_node.f = h(init_node)
+    init_node.f = h(init_node)  
     open_set.append(init_node)
+    
 
     while open_set:
         current_node = getLowestNode(open_set)
+        open_set.remove(current_node)
 
         if current_node.state.isGoal():
             return current_node
 
-        open_set.remove(current_node)
-        closed_set.add(current_node.state)
+        closed_set.append(current_node)
 
         for action, successor_state in current_node.state.successor_function():
             child = Node(successor_state, current_node, action)
             child.g = current_node.g + 1
             child.f = child.g + h(child)
-
-            if child.state not in [node.state for node in open_set] and child.state not in closed_set:
+            
+            if child.state not in [g.state for g in open_set] and child.state not in [g.state for g in closed_set]:
                 open_set.append(child)
-            else:
-                for open_node in open_set:
-                    if open_node.state == child.state and open_node.f > child.f:
-                        open_set.remove(open_node)
-                        open_set.append(child)
-                        break
-                for closed_node in closed_set:
-                    if closed_node == child.state and closed_node.f > child.f:
-                        closed_set.remove(closed_node)
-                        open_set.append(child)
-                        break
 
+            else: 
+                              
+                for open in open_set:
+                    if open.state == child.state:
+                        # print("1")
+                        if open.f < child.f:
+                            print(open)
+                            open_set.remove(open)
+                            open_set.append(child)
+                       
+                        
+                    else:
+                        # print("3")
+                        for close in closed_set:
+                            if close.state == child.state:
+                                if close.f < child.f:
+                                    print(close)
+                                    closed_set.remove(close)
+                                    closed_set.append(child)
+                                        
     return None

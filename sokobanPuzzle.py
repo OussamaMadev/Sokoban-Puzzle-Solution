@@ -104,11 +104,33 @@ def isCorner(pos,grid):
             return True
         return False
 
+# initial_grid = [
+#     [ WALL, WALL, WALL, WALL, WALL, WALL ],
+#     [ WALL, TARGET, EMPTY, BOX, EMPTY, WALL ],
+#     [ WALL, EMPTY, WALL, PLAYER, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, WALL, WALL, WALL, WALL, WALL ],
+# ]
+
+# initial_grid = [
+#     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, WALL, WALL, WALL, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL, PLAYER, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL, BOX, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, WALL ],
+#     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
+# ]
+
+    
+
 initial_grid = [
     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, TARGET, BOX, EMPTY, WALL ],
-    [ WALL, PLAYER, EMPTY, BOX, WALL, EMPTY, EMPTY, EMPTY, TARGET, WALL ],
+    [ WALL, PLAYER, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, TARGET, WALL ],
     [ WALL, EMPTY, WALL, EMPTY, WALL, WALL, WALL, EMPTY, EMPTY, WALL ],
     [ WALL, EMPTY, WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, WALL ],
     [ WALL, EMPTY, EMPTY, EMPTY, TARGET, EMPTY, WALL, EMPTY, EMPTY, WALL ],
@@ -117,19 +139,21 @@ initial_grid = [
     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
 ]
 
+#MARCHE
 # initial_grid = [
 #     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
 #     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
 #     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
-#     [ WALL, PLAYER, EMPTY, BOX, WALL, EMPTY, EMPTY, EMPTY, TARGET, WALL ],
+#     [ WALL, PLAYER, EMPTY, EMPTY, WALL, TARGET, EMPTY, EMPTY, TARGET, WALL ],
 #     [ WALL, EMPTY, WALL, EMPTY, WALL, WALL, WALL, EMPTY, EMPTY, WALL ],
 #     [ WALL, EMPTY, WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, WALL ],
-#     [ WALL, EMPTY, EMPTY, EMPTY, TARGET, EMPTY, WALL, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, WALL ],
 #     [ WALL,  EMPTY,BOX, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
 #     [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
 #     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
 # ]
 
+# MARCHE
 # initial_grid = [
 #     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
 #     [ WALL, EMPTY, PLAYER, EMPTY, EMPTY, TARGET, WALL ],
@@ -138,6 +162,8 @@ initial_grid = [
 #     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, WALL ],
 #     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
 # ]
+
+#MARCHE
 # initial_grid = [
 #     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
 #     [ WALL, EMPTY, EMPTY, WALL, EMPTY, EMPTY, PLAYER, WALL ],
@@ -147,6 +173,7 @@ initial_grid = [
 #     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
 # ]
 
+#MARCHE
 # initial_grid = [
 #     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
 #     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, TARGET, WALL ],
@@ -157,6 +184,7 @@ initial_grid = [
 #     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
 # ]
 
+#MARCHE
 # initial_grid = [
 #     [ WALL,WALL, WALL,  WALL, WALL, WALL ],
 #     [ WALL,EMPTY, EMPTY, EMPTY, TARGET, WALL ],
@@ -169,7 +197,7 @@ initial_grid = [
 #     [ WALL,EMPTY,PLAYER , EMPTY,  EMPTY, WALL ],
 #     [ WALL,WALL, WALL, WALL,  WALL, WALL ]
 # ]
-
+# MARCHE
 # initial_grid = [
 #     [ WALL,WALL, WALL,  WALL, WALL, WALL ],
 #     [ WALL,EMPTY, EMPTY, EMPTY, TARGET, WALL ],
@@ -183,6 +211,7 @@ initial_grid = [
 #     [ WALL,WALL, WALL, WALL,  WALL, WALL ]
 # ]
 
+#MARCHE
 # initial_grid=[
 #     [WALL,WALL, WALL,  WALL,WALL, WALL],
 #     [WALL,EMPTY, EMPTY,  EMPTY,EMPTY, WALL],
@@ -292,7 +321,7 @@ state = SokobanPuzzle(initial_grid,player_pos,box_positions,target_positions)
 
 animation([initial_grid],0.5)
 t=time.time()
-r=resolvingAlgos.BFS(state)
+r=resolvingAlgos.a_star(state, resolvingAlgos.h3)
 print(time.time()-t)
 if (not r):
     print('not possible to solve')
