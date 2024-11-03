@@ -71,13 +71,12 @@ def h1(node):
     return nb_left_blocks
 
 def h2(node):
-    nb_left_blocks = sum(1 for box_pos in node.state.box_positions if box_pos not in node.state.target_positions)
     heuristic_value = 0
     for box_pos in node.state.box_positions:
         if node.state.target_positions:  # Ensure target_positions is not empty
             min_distance = min(manhattan_distance(box_pos, target) for target in node.state.target_positions)
             heuristic_value += min_distance
-    return 2 * nb_left_blocks + heuristic_value
+    return 2 * h1(node) + heuristic_value
 
 
 def h3(node):
@@ -87,6 +86,12 @@ def h3(node):
         if node.state.target_positions:  # Ensure target_positions is not empty
             heuristic_value = heuristic_value + manhattan_distance(node.state.player_pos, box_pos)
     return heuristic_value
+
+def h4(node):
+    return 2*h2(node)+h3(node)
+
+def h5(node):
+    return 5*h2(node)+h3(node)
 
 def getLowestNode(open_set):
     lowestNode = open_set[0]

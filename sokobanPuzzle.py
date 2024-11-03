@@ -104,18 +104,18 @@ def isCorner(pos,grid):
             return True
         return False
 
-# initial_grid = [
-#     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
-#     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
-#     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, TARGET, BOX, EMPTY, WALL ],
-#     [ WALL, PLAYER, EMPTY, BOX, WALL, EMPTY, EMPTY, EMPTY, TARGET, WALL ],
-#     [ WALL, EMPTY, WALL, EMPTY, WALL, WALL, WALL, EMPTY, EMPTY, WALL ],
-#     [ WALL, EMPTY, WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, WALL ],
-#     [ WALL, EMPTY, EMPTY, EMPTY, TARGET, EMPTY, WALL, EMPTY, EMPTY, WALL ],
-#     [ WALL,  EMPTY,BOX, EMPTY, BOX, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
-#     [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, TARGET, EMPTY, EMPTY, EMPTY, WALL ],
-#     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
-# ]
+initial_grid = [
+    [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
+    [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+    [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, TARGET, BOX, EMPTY, WALL ],
+    [ WALL, PLAYER, EMPTY, BOX, WALL, EMPTY, EMPTY, EMPTY, TARGET, WALL ],
+    [ WALL, EMPTY, WALL, EMPTY, WALL, WALL, WALL, EMPTY, EMPTY, WALL ],
+    [ WALL, EMPTY, WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, WALL ],
+    [ WALL, EMPTY, EMPTY, EMPTY, TARGET, EMPTY, WALL, EMPTY, EMPTY, WALL ],
+    [ WALL,  EMPTY,BOX, EMPTY, BOX, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+    [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, TARGET, EMPTY, EMPTY, EMPTY, WALL ],
+    [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
+]
 
 # initial_grid = [
 #     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
@@ -132,18 +132,18 @@ def isCorner(pos,grid):
 
 
 
-initial_grid = [
-    [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
-    [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
-    [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
-    [ WALL, PLAYER, EMPTY, BOX, WALL, EMPTY, EMPTY, EMPTY, TARGET, WALL ],
-    [ WALL, EMPTY, WALL, EMPTY, WALL, WALL, WALL, EMPTY, EMPTY, WALL ],
-    [ WALL, EMPTY, WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, WALL ],
-    [ WALL, EMPTY, EMPTY, EMPTY, TARGET, EMPTY, WALL, EMPTY, EMPTY, WALL ],
-    [ WALL,  EMPTY,BOX, EMPTY, BOX, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
-    [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, TARGET, EMPTY, EMPTY, EMPTY, WALL ],
-    [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
-]
+# initial_grid = [
+#     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, PLAYER, EMPTY, BOX, WALL, EMPTY, EMPTY, EMPTY, TARGET, WALL ],
+#     [ WALL, EMPTY, WALL, EMPTY, WALL, WALL, WALL, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, TARGET, EMPTY, WALL, EMPTY, EMPTY, WALL ],
+#     [ WALL,  EMPTY,BOX, EMPTY, BOX, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, TARGET, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
+# ]
 
 
 # initial_grid = [
@@ -297,7 +297,6 @@ GRID_WIDTH, GRID_HEIGHT = len(initial_grid[0]), len(initial_grid)
 box_positions = []
 target_positions = []
 
-deadSpots=[]
 
 for i in range(GRID_HEIGHT):
     for  j in range(GRID_WIDTH):
@@ -308,10 +307,31 @@ for i in range(GRID_HEIGHT):
             box_positions.append((i, j))
         if (elem == TARGET or elem == PLAYER_ON_TARGET or elem == BOX_ON_TARGET):
             target_positions.append((i, j))
-        if (isCorner((i,j),initial_grid)):
-            deadSpots.append((i,j)) 
 
 # @todo complete the daedrSpots recognition 
+
+deadSpots = []
+
+def identify_dead_spots(grid, target_positions):
+    dead_spots = []
+    
+    # Loop through each cell in the grid
+    for i in range(len(grid)):
+        for j in range(len(grid[0])):
+            pos = (i, j)
+            
+            # Skip if it's a target position, since targets are never dead spots
+            if pos in target_positions:
+                continue
+            
+            # Check if the position is a corner without a target
+            if isCorner(pos, grid):
+                dead_spots.append(pos)
+    
+    return dead_spots
+
+deadSpots = identify_dead_spots(initial_grid, target_positions)
+
 
 TILE_SIZE = 50
 SCREEN_WIDTH, SCREEN_HEIGHT = GRID_WIDTH * TILE_SIZE, GRID_HEIGHT * TILE_SIZE
@@ -391,7 +411,7 @@ state = SokobanPuzzle(initial_grid,player_pos,box_positions,target_positions)
 
 animation([initial_grid],0.5)
 t=time.time()
-r=resolvingAlgos.a_star(state,resolvingAlgos.h1)
+r=resolvingAlgos.a_star(state,resolvingAlgos.h5)
 # r=resolvingAlgos.BFS(state)
 dur=str(datetime.timedelta(seconds = time.time()-t))
 print(dur)
