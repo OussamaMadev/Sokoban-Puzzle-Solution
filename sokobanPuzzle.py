@@ -120,7 +120,7 @@ def isCorner(pos,grid):
 
 initial_grid = [
     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
-    [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+    [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, TARGET, WALL ],
     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
     [ WALL, PLAYER, EMPTY, BOX, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
     [ WALL, EMPTY, WALL, EMPTY, WALL, WALL, WALL, EMPTY, EMPTY, WALL ],
@@ -139,6 +139,7 @@ initial_grid = [
 #     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, WALL ],
 #     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
 # ]
+
 # initial_grid = [
 #     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
 #     [ WALL, EMPTY, EMPTY, WALL, EMPTY, EMPTY, PLAYER, WALL ],
@@ -214,18 +215,16 @@ for i in range(GRID_HEIGHT):
 
 # @todo complete the daedrSpots recognition 
 
-print(target_positions)
-print(box_positions)
 TILE_SIZE = 50
 SCREEN_WIDTH, SCREEN_HEIGHT = GRID_WIDTH * TILE_SIZE, GRID_HEIGHT * TILE_SIZE
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
-player_img = pygame.transform.scale(pygame.image.load('./Sokoban-Puzzle-Solution/imgs/angry-birds.png'), (TILE_SIZE, TILE_SIZE)) 
-wall_img = pygame.transform.scale(pygame.image.load('./Sokoban-Puzzle-Solution/imgs/wall.png') , (TILE_SIZE, TILE_SIZE)) 
-box_img = pygame.transform.scale(pygame.image.load('./Sokoban-Puzzle-Solution/imgs/box.png'), (TILE_SIZE, TILE_SIZE)) 
-target_img = pygame.transform.scale(pygame.image.load('./Sokoban-Puzzle-Solution/imgs/target.png') , (TILE_SIZE, TILE_SIZE)) 
+player_img = pygame.transform.scale(pygame.image.load('./imgs/angry-birds.png'), (TILE_SIZE, TILE_SIZE)) 
+wall_img = pygame.transform.scale(pygame.image.load('./imgs/wall.png') , (TILE_SIZE, TILE_SIZE)) 
+box_img = pygame.transform.scale(pygame.image.load('./imgs/box.png'), (TILE_SIZE, TILE_SIZE)) 
+target_img = pygame.transform.scale(pygame.image.load('./imgs/target.png') , (TILE_SIZE, TILE_SIZE)) 
 empty_img = pygame.Surface((TILE_SIZE, TILE_SIZE))
 empty_img.fill(WHITE) 
 
@@ -258,23 +257,22 @@ def draw_text(screen, text, x, y, font_size=30, color=(0, 0, 0), bg_color=(0, 0,
     screen.blit(bg_surface, bg_surface.get_rect(center=text_rect.center))
     screen.blit(text_surface, text_rect)
 
-def animation(nodes,delay):
+def animation(grides_list,delay):
 
     pygame.init()
     pygame.display.set_caption("Sokoban Game")
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     i=0
-    nodes.reverse()
-    end=len(nodes)-1
+    end=len(grides_list)-1
     running = True
     while running:  
         screen.fill(WHITE)
         
         if(i<end+1):
-            draw_grid(nodes[i],screen)
+            draw_grid(grides_list[i],screen)
             i=i+1
         else:
-            draw_grid(nodes[end],screen)
+            draw_grid(grides_list[end],screen)
             if end>0:
                 draw_text(screen, "DONE", SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, font_size=100, color=(0, 255, 0), bg_color=(0, 0, 0, 150))
             else :
@@ -293,6 +291,7 @@ state = SokobanPuzzle(initial_grid,player_pos,box_positions,target_positions)
 
 animation([initial_grid],0.5)
 t=time.time()
+# r=resolvingAlgos.a_star(state,resolvingAlgos.h1)
 r=resolvingAlgos.BFS(state)
 dur=str(datetime.timedelta(seconds = time.time()-t))
 print(dur)
@@ -308,4 +307,5 @@ while r.parent :
     r=r.parent
     grids.append(r.state.grid)
 
-animation(grids,0.6)
+grids.reverse()
+animation(grids,0.1)
