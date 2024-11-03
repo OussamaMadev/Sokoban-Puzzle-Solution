@@ -104,32 +104,89 @@ def isCorner(pos,grid):
             return True
         return False
 
+initial_grid = [
+    [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
+    [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+    [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, TARGET, BOX, EMPTY, WALL ],
+    [ WALL, PLAYER, EMPTY, BOX, WALL, EMPTY, EMPTY, EMPTY, TARGET, WALL ],
+    [ WALL, EMPTY, WALL, EMPTY, WALL, WALL, WALL, EMPTY, EMPTY, WALL ],
+    [ WALL, EMPTY, WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, WALL ],
+    [ WALL, EMPTY, EMPTY, EMPTY, TARGET, EMPTY, WALL, EMPTY, EMPTY, WALL ],
+    [ WALL,  EMPTY,BOX, EMPTY, BOX, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+    [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, TARGET, EMPTY, EMPTY, EMPTY, WALL ],
+    [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
+]
+initial_grid = [
+    [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
+    [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+    [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+    [ WALL, PLAYER, EMPTY, BOX, WALL, EMPTY, EMPTY, EMPTY, TARGET, WALL ],
+    [ WALL, EMPTY, WALL, EMPTY, WALL, WALL, WALL, EMPTY, EMPTY, WALL ],
+    [ WALL, EMPTY, WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, WALL ],
+    [ WALL, EMPTY, EMPTY, EMPTY, TARGET, EMPTY, WALL, EMPTY, EMPTY, WALL ],
+    [ WALL,  EMPTY,BOX, EMPTY, BOX, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+    [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, TARGET, EMPTY, EMPTY, EMPTY, WALL ],
+    [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
+]
+
+
 # initial_grid = [
 #     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
 #     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
-#     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, TARGET, BOX, EMPTY, WALL ],
-#     [ WALL, PLAYER, EMPTY, BOX, WALL, EMPTY, EMPTY, EMPTY, TARGET, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, PLAYER, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
 #     [ WALL, EMPTY, WALL, EMPTY, WALL, WALL, WALL, EMPTY, EMPTY, WALL ],
 #     [ WALL, EMPTY, WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, WALL ],
 #     [ WALL, EMPTY, EMPTY, EMPTY, TARGET, EMPTY, WALL, EMPTY, EMPTY, WALL ],
-#     [ WALL,  EMPTY,BOX, EMPTY, BOX, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
-#     [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, TARGET, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL,  EMPTY,BOX, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
+# ]
+
+# initial_grid = [
+#     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, TARGET, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, PLAYER, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, WALL, EMPTY, WALL, WALL, WALL, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, WALL ],
+#     [ WALL,  EMPTY,BOX, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
+# ]
+
+# initial_grid = [
+#     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, PLAYER, EMPTY, BOX, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, WALL, EMPTY, WALL, WALL, WALL, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, TARGET, EMPTY, WALL, EMPTY, EMPTY, WALL ],
+#     [ WALL,  EMPTY,EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
+# ]
+
+# initial_grid = [
+#     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, TARGET, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, PLAYER, EMPTY, BOX, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, WALL, EMPTY, WALL, WALL, WALL, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, WALL ],
+#     [ WALL,  EMPTY,EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
 #     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
 # ]
 
 
-initial_grid = [
-    [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
-    [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, TARGET, WALL ],
-    [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
-    [ WALL, PLAYER, EMPTY, BOX, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
-    [ WALL, EMPTY, WALL, EMPTY, WALL, WALL, WALL, EMPTY, EMPTY, WALL ],
-    [ WALL, EMPTY, WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, WALL ],
-    [ WALL, EMPTY, EMPTY, EMPTY, TARGET, EMPTY, WALL, EMPTY, EMPTY, WALL ],
-    [ WALL,  EMPTY,BOX, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
-    [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
-    [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
-]
+
+
+
+
 
 # initial_grid = [
 #     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
@@ -149,6 +206,7 @@ initial_grid = [
 #     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
 # ]
 
+#MARCHE
 # initial_grid = [
 #     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
 #     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, TARGET, WALL ],
@@ -159,6 +217,7 @@ initial_grid = [
 #     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
 # ]
 
+#MARCHE
 # initial_grid = [
 #     [ WALL,WALL, WALL,  WALL, WALL, WALL ],
 #     [ WALL,EMPTY, EMPTY, EMPTY, TARGET, WALL ],
@@ -171,7 +230,7 @@ initial_grid = [
 #     [ WALL,EMPTY,PLAYER , EMPTY,  EMPTY, WALL ],
 #     [ WALL,WALL, WALL, WALL,  WALL, WALL ]
 # ]
-
+# MARCHE
 # initial_grid = [
 #     [ WALL,WALL, WALL,  WALL, WALL, WALL ],
 #     [ WALL,EMPTY, EMPTY, EMPTY, TARGET, WALL ],
@@ -185,6 +244,7 @@ initial_grid = [
 #     [ WALL,WALL, WALL, WALL,  WALL, WALL ]
 # ]
 
+#MARCHE
 # initial_grid=[
 #     [WALL,WALL, WALL,  WALL,WALL, WALL],
 #     [WALL,EMPTY, EMPTY,  EMPTY,EMPTY, WALL],
@@ -222,8 +282,10 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
 player_img = pygame.transform.scale(pygame.image.load('./imgs/angry-birds.png'), (TILE_SIZE, TILE_SIZE)) 
+playerOnTarget_img = pygame.transform.scale(pygame.image.load('./imgs/angry-birdsOnTarget.png'), (TILE_SIZE, TILE_SIZE)) 
 wall_img = pygame.transform.scale(pygame.image.load('./imgs/wall.png') , (TILE_SIZE, TILE_SIZE)) 
 box_img = pygame.transform.scale(pygame.image.load('./imgs/box.png'), (TILE_SIZE, TILE_SIZE)) 
+boxOnTarget_img = pygame.transform.scale(pygame.image.load('./imgs/boxOnTarget.png'), (TILE_SIZE, TILE_SIZE)) 
 target_img = pygame.transform.scale(pygame.image.load('./imgs/target.png') , (TILE_SIZE, TILE_SIZE)) 
 empty_img = pygame.Surface((TILE_SIZE, TILE_SIZE))
 empty_img.fill(WHITE) 
@@ -244,9 +306,9 @@ def draw_grid(grid,screen):
             elif element == EMPTY:
                 screen.blit(empty_img, (x, y))
             elif element == PLAYER_ON_TARGET:
-                screen.blit(player_img, (x, y))  
+                screen.blit(playerOnTarget_img, (x, y))  
             elif element == BOX_ON_TARGET:
-                screen.blit(box_img, (x, y)) 
+                screen.blit(boxOnTarget_img, (x, y)) 
 
 def draw_text(screen, text, x, y, font_size=30, color=(0, 0, 0), bg_color=(0, 0, 0, 150)):
     font = pygame.font.Font(None, font_size)
@@ -291,8 +353,8 @@ state = SokobanPuzzle(initial_grid,player_pos,box_positions,target_positions)
 
 animation([initial_grid],0.5)
 t=time.time()
-# r=resolvingAlgos.a_star(state,resolvingAlgos.h1)
-r=resolvingAlgos.BFS(state)
+r=resolvingAlgos.a_star(state,resolvingAlgos.h2)
+# r=resolvingAlgos.BFS(state)
 dur=str(datetime.timedelta(seconds = time.time()-t))
 print(dur)
 
