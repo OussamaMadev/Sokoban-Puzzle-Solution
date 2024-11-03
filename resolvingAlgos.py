@@ -1,5 +1,4 @@
 import queue
-import heapq
 
 class Node:
     def __init__(self, state, parent=None, action=None, g=0):
@@ -91,12 +90,13 @@ def getLowestNode(open_set):
 
 def a_star(start_state, h):
     open_set = []
-    closed_set = set()
+    closed_set = []
 
     init_node = Node(start_state)
     init_node.g = 0
-    init_node.f = h(init_node)
+    init_node.f = h(init_node)  
     open_set.append(init_node)
+    
 
     while open_set:
         current_node = getLowestNode(open_set)
@@ -105,16 +105,19 @@ def a_star(start_state, h):
             return current_node
 
         open_set.remove(current_node)
-        closed_set.add(current_node)
+        closed_set.append(current_node)
 
         for action, successor_state in current_node.state.successor_function():
             child = Node(successor_state, current_node, action)
             child.g = current_node.g + 1
             child.f = child.g + h(child)
-
-            if child.state not in [node.state for node in open_set] and child.state not in closed_set:
+            
+            if child.state not in open_set and child.state not in closed_set:
                 open_set.append(child)
+                
+
             else:
+                print("open_set: ", len(open_set))
                 for open_node in open_set:
                     if open_node.state == child.state and open_node.f > child.f:
                         open_set.remove(open_node)

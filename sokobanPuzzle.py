@@ -2,11 +2,10 @@ import sys
 import pygame
 import resolvingAlgos
 import copy
-import queue
-from resolvingAlgos import Node
-player_pos = (1, 1)
-box_positions = [(3, 2)]
-target_positions = [(2, 2)]
+
+player_pos = (2, 3)  # Position du joueur
+box_positions = [(1, 3)]  # Position des boîtes
+target_positions = [(1,1)]  # Positions des cibles
 
 TILE_SIZE = 100
 GRID_WIDTH, GRID_HEIGHT = 6, 6
@@ -24,12 +23,12 @@ PLAYER_ON_TARGET = '.'
 BOX_ON_TARGET = '*'
 
 initial_grid = [
-    [WALL, WALL,   WALL,   WALL,  WALL,  WALL],
-    [WALL, PLAYER,  EMPTY,  EMPTY, EMPTY, WALL],
-    [WALL, EMPTY,  TARGET, EMPTY,   EMPTY ,WALL],
-    [WALL, EMPTY, BOX,  WALL, EMPTY ,WALL],
-    [WALL, EMPTY, EMPTY,    EMPTY, EMPTY ,WALL],
-    [WALL, WALL,   WALL,   WALL,  WALL,  WALL],
+    [WALL, WALL, WALL, WALL, WALL, WALL],
+    [WALL, TARGET, EMPTY, BOX, EMPTY, WALL],
+    [WALL, EMPTY, WALL, PLAYER, EMPTY, WALL],
+    [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+    [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+    [WALL, WALL, WALL, WALL, WALL, WALL],
 ]
 
 class SokobanPuzzle:
@@ -39,12 +38,6 @@ class SokobanPuzzle:
         self.box_positions = set(box_positions)
         self.target_positions = set(target_positions)
 
-        def __eq__(self, other):
-            return (self.grid == other.grid and
-            self.player_pos == other.player_pos and
-            self.box_positions == other.box_positions and
-            self.target_positions == other.target_positions)
-            
     def isGoal(self):
        return self.box_positions == self.target_positions
     
@@ -105,10 +98,6 @@ class SokobanPuzzle:
                 successors.append((action, new_state))
 
         return successors
-    
-    
-    def is_valid_position(self, pos):
-        return 0 <= pos[0] < len(self.grid) and 0 <= pos[1] < len(self.grid[0]) and self.grid[pos[0]][pos[1]] != "#"
 
 
 def animation():
@@ -233,20 +222,24 @@ def animation():
 
 state = SokobanPuzzle(initial_grid,player_pos,box_positions,target_positions)
 
-# # r=resolvingAlgos.BFS(state)
-
-# # while r.parent :
-# #     resolvingAlgos.printGrid(r.state.grid)
-# #     r=r.parent
-
-# # resolvingAlgos.printGrid(state.grid)
-
-
 r=resolvingAlgos.a_star(state, resolvingAlgos.h2)
 
-while r.parent:
+
+while r.parent :
     resolvingAlgos.printGrid(r.state.grid)
     r=r.parent
 
 resolvingAlgos.printGrid(state.grid)
 
+# animation()
+# print('init grid :')
+# print(state.player_pos)
+# resolvingAlgos.printGrid(state.grid)
+
+# states=state.successor_function()
+
+# print('successor grids :')
+# for (action, successor) in states:
+#     print(action)
+#     print(successor.player_pos)
+#     resolvingAlgos.printGrid(successor.grid)
