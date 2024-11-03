@@ -96,47 +96,98 @@ def getLowestNode(open_set):
     
     return lowestNode
 
-def a_star(start_state, h):
-    open_set = []
-    closed_set = []
+# def a_star(start_state, h):
+#     open_set = []
+#     closed_set = []
 
-    init_node = Node(start_state)
-    init_node.g = 0
-    init_node.f = h(init_node)  
-    open_set.append(init_node)
+#     init_node = Node(start_state)
+#     init_node.g = 0
+#     init_node.f = h(init_node)  
+#     open_set.append(init_node)
     
 
-    while open_set:
-        current_node = getLowestNode(open_set)
-        open_set.remove(current_node)
+#     while open_set:
+#         current_node = getLowestNode(open_set)
+#         open_set.remove(current_node)
+
+#         if current_node.state.isGoal():
+#             return current_node
+
+#         closed_set.append(current_node)
+
+#         for action, successor_state in current_node.state.successor_function():
+#             child = Node(successor_state, current_node, action)
+#             child.g = current_node.g + 1
+#             child.f = child.g + h(child)
+            
+#             if child.state not in [g.state for g in open_set] and child.state not in [g.state for g in closed_set]:
+#                 open_set.append(child)
+
+#             else: 
+                              
+#                 for open in open_set:
+#                     if open.state == child.state:
+#                         if open.f < child.f:
+#                             open_set.remove(open)
+#                             open_set.append(child)
+                       
+                        
+#                     else:
+#                         for close in closed_set:
+#                             if close.state == child.state:
+#                                 if close.f < child.f:
+#                                     closed_set.remove(close)
+#                                     closed_set.append(child)
+                                        
+#     return None
+
+
+import heapq
+
+
+def push_to_open(open, node):
+    heapq.heappush(open, (node.f, id(node), node))
+
+def pop_from_open(open):
+    _, _, node = heapq.heappop(open)
+    return node
+
+def update_open(open, child):
+    for i, (f, node_id, existing) in enumerate(open):
+        if existing.state == child.state and child.f < f:
+            open[i] = (child.f, id(child), child)
+            heapq.heapify(open)
+            break
+
+
+def a_star(start_state, h):
+    open = []
+    closed_set = set()
+    init_node = Node(start_state)
+    init_node.g = 0
+    init_node.f = h(init_node)
+
+    push_to_open(open, init_node)
+
+    while open:
+        current_node = pop_from_open(open)
 
         if current_node.state.isGoal():
             return current_node
 
-        closed_set.append(current_node)
+        closed_set.add(current_node.state)
 
         for action, successor_state in current_node.state.successor_function():
             child = Node(successor_state, current_node, action)
             child.g = current_node.g + 1
             child.f = child.g + h(child)
-            
-            if child.state not in [g.state for g in open_set] and child.state not in [g.state for g in closed_set]:
-                open_set.append(child)
 
-            else: 
-                              
-                for open in open_set:
-                    if open.state == child.state:
-                        if open.f < child.f:
-                            open_set.remove(open)
-                            open_set.append(child)
-                       
-                        
-                    else:
-                        for close in closed_set:
-                            if close.state == child.state:
-                                if close.f < child.f:
-                                    closed_set.remove(close)
-                                    closed_set.append(child)
-                                        
+            if child.state not in closed_set:
+                in_open = any(existing.state == child.state for _, _, existing in open)
+
+                if not in_open:
+                    push_to_open(open, child)
+                else:
+                    update_open(open, child)
+
     return None

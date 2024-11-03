@@ -104,18 +104,34 @@ def isCorner(pos,grid):
             return True
         return False
 
-initial_grid = [
-    [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
-    [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
-    [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, TARGET, BOX, EMPTY, WALL ],
-    [ WALL, PLAYER, EMPTY, BOX, WALL, EMPTY, EMPTY, EMPTY, TARGET, WALL ],
-    [ WALL, EMPTY, WALL, EMPTY, WALL, WALL, WALL, EMPTY, EMPTY, WALL ],
-    [ WALL, EMPTY, WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, WALL ],
-    [ WALL, EMPTY, EMPTY, EMPTY, TARGET, EMPTY, WALL, EMPTY, EMPTY, WALL ],
-    [ WALL,  EMPTY,BOX, EMPTY, BOX, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
-    [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, TARGET, EMPTY, EMPTY, EMPTY, WALL ],
-    [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
-]
+# initial_grid = [
+#     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, TARGET, BOX, EMPTY, WALL ],
+#     [ WALL, PLAYER, EMPTY, BOX, WALL, EMPTY, EMPTY, EMPTY, TARGET, WALL ],
+#     [ WALL, EMPTY, WALL, EMPTY, WALL, WALL, WALL, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, TARGET, EMPTY, WALL, EMPTY, EMPTY, WALL ],
+#     [ WALL,  EMPTY,BOX, EMPTY, BOX, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, TARGET, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
+# ]
+
+# initial_grid = [
+#     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, BOX, EMPTY, WALL ],
+#     [ WALL, PLAYER, EMPTY, BOX, EMPTY, EMPTY, EMPTY, EMPTY, TARGET, WALL ],
+#     [ WALL, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, TARGET, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL,  EMPTY,EMPTY, EMPTY, BOX, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, EMPTY, TARGET, EMPTY, EMPTY, EMPTY, WALL ],
+#     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
+# ]
+
+
+
 initial_grid = [
     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
@@ -186,7 +202,29 @@ initial_grid = [
 
 
 
+# ===============exemple 3 de tp
+# initial_grid = [
+#     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL,WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY,WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY,WALL ],
+#     [ WALL, EMPTY, EMPTY, BOX, PLAYER, EMPTY, EMPTY,WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, WALL, BOX, TARGET,WALL ],
+#     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, TARGET,WALL ],
+#     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL,WALL ]
+# ]
 
+# ===============exemple 4 de tp
+# initial_grid = [
+#     [EMPTY, WALL, WALL, WALL, WALL, EMPTY, EMPTY],
+#     [EMPTY, WALL, EMPTY, EMPTY, WALL, EMPTY, EMPTY],
+#     [EMPTY, WALL, EMPTY, EMPTY, WALL, WALL, WALL, EMPTY],
+#     [EMPTY, WALL, EMPTY, BOX_ON_TARGET, EMPTY, EMPTY, WALL],
+#     [WALL, WALL, BOX, WALL, BOX, EMPTY, WALL],
+#     [WALL, EMPTY, TARGET, PLAYER, TARGET, EMPTY, WALL],
+#     [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL, WALL],
+#     [WALL, WALL, WALL, EMPTY, EMPTY, WALL, WALL],
+#     [EMPTY, EMPTY, WALL, WALL, WALL, WALL, WALL,]
+# ]
 
 # initial_grid = [
 #     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
@@ -217,7 +255,7 @@ initial_grid = [
 #     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ]
 # ]
 
-#MARCHE
+# MARCHE
 # initial_grid = [
 #     [ WALL,WALL, WALL,  WALL, WALL, WALL ],
 #     [ WALL,EMPTY, EMPTY, EMPTY, TARGET, WALL ],
@@ -353,7 +391,7 @@ state = SokobanPuzzle(initial_grid,player_pos,box_positions,target_positions)
 
 animation([initial_grid],0.5)
 t=time.time()
-r=resolvingAlgos.a_star(state,resolvingAlgos.h2)
+r=resolvingAlgos.a_star(state,resolvingAlgos.h1)
 # r=resolvingAlgos.BFS(state)
 dur=str(datetime.timedelta(seconds = time.time()-t))
 print(dur)
