@@ -91,19 +91,6 @@ class SokobanPuzzle:
     def __hash__(self):
         return hash((self.player_pos, frozenset(self.box_positions), frozenset(self.target_positions)))
 
-def isCorner(pos,grid):
-        x,y=pos
-
-        # if on border
-        if x==0 or x>=len(grid)-1 or y==0 or y>=len(grid[0])-1 : return False
-
-        if((grid[x+1][y]==WALL and grid[x][y+1]==WALL) 
-            or (grid[x+1][y]==WALL and grid[x][y-1]==WALL)
-            or (grid[x-1][y]==WALL and grid[x][y+1]==WALL)
-            or (grid[x-1][y]==WALL and grid[x][y-1]==WALL)):
-            return True
-        return False
-
 initial_grid = [
     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
     [ WALL, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL ],
@@ -297,6 +284,7 @@ GRID_WIDTH, GRID_HEIGHT = len(initial_grid[0]), len(initial_grid)
 box_positions = []
 target_positions = []
 
+deadSpots = []
 
 for i in range(GRID_HEIGHT):
     for  j in range(GRID_WIDTH):
@@ -308,35 +296,88 @@ for i in range(GRID_HEIGHT):
         if (elem == TARGET or elem == PLAYER_ON_TARGET or elem == BOX_ON_TARGET):
             target_positions.append((i, j))
 
-# @todo complete the daedrSpots recognition 
-
-deadSpots = []
 
 def identify_dead_spots(grid, target_positions):
-    dead_spots = []
-    
-    # Loop through each cell in the grid
+    dead_spots = set()
+
+    # Identify initial corner dead spots
     for i in range(len(grid)):
         for j in range(len(grid[0])):
             pos = (i, j)
             
-            # Skip if it's a target position, since targets are never dead spots
-            if pos in target_positions:
+            if pos in target_positions or grid[i][j] == WALL:
                 continue
             
-            # Check if the position is a corner without a target
-            if isCorner(pos, grid):
-                dead_spots.append(pos)
+            if is_corner(pos, grid):
+                dead_spots.add(pos)
+
+    # Expand dead spots along rows and columns
+    expand_dead_spots(dead_spots, grid, target_positions)
+
+    return list(dead_spots)
+
+def expand_dead_spots(dead_spots, grid, target_positions):
+    rows, cols = len(grid), len(grid[0])
+
+    for i in range(rows):
+        for j in range(cols):
+            pos = (i, j)
+            if pos in dead_spots:
+                # Expand horizontally
+                expand_line(dead_spots, pos, (0, 1), grid, target_positions)  # Right
+                expand_line(dead_spots, pos, (0, -1), grid, target_positions)  # Left
+
+                # Expand vertically
+                expand_line(dead_spots, pos, (1, 0), grid, target_positions)  # Down
+                expand_line(dead_spots, pos, (-1, 0), grid, target_positions)  # Up
+
+def expand_line(dead_spots, start, direction, grid, target_positions):
+    i, j = start
+    di, dj = direction
+    current_line = []  
+
+    while True:
+        i, j = i + di, j + dj
+        pos = (i, j)
+
+        if not (0 <= i < len(grid) and 0 <= j < len(grid[0])) or grid[i][j] == WALL:
+            break
+        if pos in target_positions:
+            return  
+
+        if is_bounded_by_wall(i, j, direction, grid):
+            current_line.append(pos)
+        else:
+            return  
+
+    dead_spots.update(current_line)
+
+def is_bounded_by_wall(i, j, direction, grid):
     
-    return dead_spots
+    if direction == (0, 1) or direction == (0, -1): 
+        return (i > 0 and grid[i-1][j] == WALL) or (i < len(grid) - 1 and grid[i+1][j] == WALL)
+    else: 
+        return (j > 0 and grid[i][j-1] == WALL) or (j < len(grid[0]) - 1 and grid[i][j+1] == WALL)
 
-deadSpots = identify_dead_spots(initial_grid, target_positions)
+def is_corner(pos, grid):
+        x,y=pos
+        # if on border
+        if x==0 or x>=len(grid)-1 or y==0 or y>=len(grid[0])-1 : return False
 
+        if((grid[x+1][y]==WALL and grid[x][y+1]==WALL) 
+            or (grid[x+1][y]==WALL and grid[x][y-1]==WALL)
+            or (grid[x-1][y]==WALL and grid[x][y+1]==WALL)
+            or (grid[x-1][y]==WALL and grid[x][y-1]==WALL)):
+            return True
+        return False
+
+deadSpots=identify_dead_spots(initial_grid, target_positions)
 
 TILE_SIZE = 50
 SCREEN_WIDTH, SCREEN_HEIGHT = GRID_WIDTH * TILE_SIZE, GRID_HEIGHT * TILE_SIZE
 
 WHITE = (255, 255, 255)
+RED = (255, 100, 100)
 BLACK = (0, 0, 0)
 
 player_img = pygame.transform.scale(pygame.image.load('./imgs/angry-birds.png'), (TILE_SIZE, TILE_SIZE)) 
@@ -347,12 +388,18 @@ boxOnTarget_img = pygame.transform.scale(pygame.image.load('./imgs/boxOnTarget.p
 target_img = pygame.transform.scale(pygame.image.load('./imgs/target.png') , (TILE_SIZE, TILE_SIZE)) 
 empty_img = pygame.Surface((TILE_SIZE, TILE_SIZE))
 empty_img.fill(WHITE) 
+dead_img = pygame.Surface((TILE_SIZE, TILE_SIZE))
+dead_img.fill(RED) 
 
 def draw_grid(grid,screen):
     for row in range(GRID_HEIGHT):
         for col in range(GRID_WIDTH):
             element = grid[row][col]
             x, y = col * TILE_SIZE, row * TILE_SIZE
+            if (row , col) in deadSpots:
+                screen.blit(dead_img, (x, y)) 
+            if (row , col) in deadSpots:
+                screen.blit(dead_img, (x, y)) 
             if element == PLAYER:
                 screen.blit(player_img, (x, y))
             elif element == BOX:
@@ -361,13 +408,13 @@ def draw_grid(grid,screen):
                 screen.blit(wall_img, (x, y))
             elif element == TARGET:
                 screen.blit(target_img, (x, y))
-            elif element == EMPTY:
+            elif element == EMPTY and (row , col) not in deadSpots:
                 screen.blit(empty_img, (x, y))
             elif element == PLAYER_ON_TARGET:
                 screen.blit(playerOnTarget_img, (x, y))  
             elif element == BOX_ON_TARGET:
                 screen.blit(boxOnTarget_img, (x, y)) 
-
+                
 def draw_text(screen, text, x, y, font_size=30, color=(0, 0, 0), bg_color=(0, 0, 0, 150)):
     font = pygame.font.Font(None, font_size)
     text_surface = font.render(text, True, color)
