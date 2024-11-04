@@ -187,7 +187,26 @@ initial_grid = [
 
 
 
+# =========deadspot tp1
+initial_grid=[
+    [ WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
+    [WALL,TARGET,EMPTY,WALL,EMPTY,PLAYER,WALL],
+    [WALL,EMPTY,EMPTY,WALL,BOX,EMPTY,WALL],
+    [WALL,TARGET,EMPTY,EMPTY,BOX,EMPTY,WALL],
+    [WALL,EMPTY,EMPTY,WALL,BOX,EMPTY,WALL],
+    [WALL,TARGET,EMPTY,WALL,EMPTY,EMPTY,WALL],
+    [ WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
+]
 
+# =========deadspot tp2
+# initial_grid=[
+#     [WALL,WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
+#     [WALL,TARGET,TARGET,TARGET,EMPTY,WALL,WALL,WALL],
+#     [WALL,EMPTY,TARGET,EMPTY,BOX,EMPTY,EMPTY,WALL],
+#     [WALL,EMPTY,EMPTY,BOX,BOX,BOX,EMPTY,WALL],
+#     [WALL,WALL,WALL,WALL,EMPTY,EMPTY,PLAYER,WALL],
+#     [WALL,WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
+# ]
 
 # ===============exemple 3 de tp
 # initial_grid = [
@@ -212,6 +231,21 @@ initial_grid = [
 #     [WALL, WALL, WALL, EMPTY, EMPTY, WALL, WALL],
 #     [EMPTY, EMPTY, WALL, WALL, WALL, WALL, WALL,]
 # ]
+
+
+# ===============exemple 5 de tp
+# initial_grid = [
+#     [WALL ,WALL,WALL, WALL, WALL, WALL, WALL, WALL, WALL],
+#     [WALL ,WALL,WALL, TARGET, WALL, EMPTY, EMPTY, WALL, WALL],
+#     [WALL ,EMPTY,EMPTY, EMPTY, EMPTY, BOX, EMPTY, WALL, WALL, WALL],
+#     [WALL ,EMPTY,BOX, EMPTY, EMPTY, EMPTY, EMPTY, TARGET, WALL],
+#     [WALL ,WALL,WALL, EMPTY, PLAYER, EMPTY, WALL, WALL, WALL],
+#     [WALL ,WALL,WALL, EMPTY, WALL, EMPTY, WALL, WALL, WALL],
+#     [WALL ,WALL,WALL, BOX, WALL, EMPTY, WALL, WALL, WALL],
+#     [WALL ,WALL,WALL, EMPTY, EMPTY, TARGET, WALL, WALL, WALL],
+#     [WALL ,WALL,WALL, WALL, WALL, WALL, WALL, WALL, WALL,]
+# ]
+
 
 # initial_grid = [
 #     [ WALL, WALL, WALL, WALL, WALL, WALL, WALL ],
@@ -371,7 +405,7 @@ def is_corner(pos, grid):
             return True
         return False
 
-deadSpots=identify_dead_spots(initial_grid, target_positions)
+# deadSpots=identify_dead_spots(initial_grid, target_positions)
 
 TILE_SIZE = 50
 SCREEN_WIDTH, SCREEN_HEIGHT = GRID_WIDTH * TILE_SIZE, GRID_HEIGHT * TILE_SIZE
@@ -458,7 +492,7 @@ state = SokobanPuzzle(initial_grid,player_pos,box_positions,target_positions)
 
 animation([initial_grid],0.5)
 t=time.time()
-r=resolvingAlgos.a_star(state,resolvingAlgos.h5)
+r=resolvingAlgos.a_star(state,resolvingAlgos.h3)
 # r=resolvingAlgos.BFS(state)
 dur=str(datetime.timedelta(seconds = time.time()-t))
 print(dur)
